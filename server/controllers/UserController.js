@@ -1,6 +1,10 @@
 const db = require("../models");
 const { Op } = require("sequelize");
 const User = db.users;
+const jwt = require("../models/jwt")
+
+
+
 
 
 //nameCheck
@@ -9,7 +13,7 @@ const checkId = async (req,res) =>{
         let userId = req.body.id;
         const user = await User.findOne({
             where: {
-                [Op.or]: [{ UserId: userId }],
+                [Op.or]: [{ userId: userId }],
             },
         });
         console.log(res.json)
@@ -38,15 +42,17 @@ const addUser = async (req, res) => {
 };
 
 const oneUser = async (req, res ) => {
-    let username = req.body.id;
+    let userId = req.body.userId;
     let password = req.body.password;
 
+    // eslint-disable-next-line no-useless-catch
     try {
-        await User.findOne({where: {userId: username, password: password}}).then(result => {
-            console.log(({code: 200, data: result.dataValues}))
-            return res.status(200).json({code: 200, data: result.dataValues})
-        }).catch((err) => {
-          return res.send({code: 401})
+       const user = await User.findOne({where: {userId: userId, password: password}})
+        const jwtToken = await jwt.sign(user);
+        return res.send({
+            /* 생성된 Token을 클라이언트에게 Response */
+            code:200,
+            token: jwtToken.token
         })
     }catch (err){
         throw err

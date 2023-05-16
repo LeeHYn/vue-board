@@ -1,62 +1,74 @@
 const db = require("../models");
-const {data} = require("browserslist");
-const {Op} = require("sequelize");
 const BoardPage = db.boards;
-
-
+require('data-utils')
 const getBoards = async (req, res) => {
     try {
         const board = await BoardPage.findAll({
-            attributes:['boardId','boardTitle','boardContent','createdAt']
+            attributes: ['id', 'boardTitle', 'boardContent', 'createdAt']
         })
 
-        if(board===null){
-           return res.status(400).send('Bed Reqeuest')
-        }else {
+        if (board === null) {
+            return res.status(400).send('Bed Reqeuest')
+        } else {
 
-           return res.send(board)
-        }
-    }catch (err) {
-        console.log(err)
-    }
-
-};
-
-const getBoard= async (req, res) => {
-    try {
-        let boardId = req.body.boardId;
-        const board = await BoardPage.findOne( {where: {
-            [Op.or]: [{ boardId: boardId }],
-        }})
             return res.send(board)
-    }catch (err) {
+        }
+    } catch (err) {
         console.log(err)
     }
 
 };
+
+const getBoard = async (req, res) => {
+    try {
+        let id = req.body.id;
+        const board = await BoardPage.findOne({
+            where: {
+                id: id
+            }, attributes: ['id', 'boardTitle', 'boardContent', 'createdAt', 'updatedAt']
+        })
+        return res.send(board)
+    } catch (err) {
+        console.log(err)
+    }
+
+};
+//create
+const addBoard = async (req, res) => {
+    new Date();
+    await BoardPage.create({
+        boardTitle: req.body.boardTitle,
+        boardContent: req.body.boardContent,
+    }).then(
+        res.send({code: 200})
+    )
+};
+
 //Update
 const updateBoard = async (req, res) => {
-    let id = req.params.boardId;
-    const user = await BoardPage.update(req.body, {where: {id: id}}).catch((err) =>
+
+    const id = req.body.id;
+    //아이디를 비교해서 같을떄에 db에 삽입
+    await BoardPage.update(req.body, {where: {id: id}}).then(
+        res.send({code: 200})
+    ).catch((err) =>
         console.log(err)
     );
-    res.status(200).send(user);
+
 };
 
+
 //Delete
-const boardDelete = async (req,res)=>{
-    try {
-        let id = req.params.boardId;
-        await BoardPage.destroy({where: {boardId: id}}).catch((err) => console.log(err));
-        res.status(200).send("BoardRow is deleted");
-    }catch (e){
-        console.log(e)
-    }
+const boardDelete = async (req, res) => {
+    console.log(req.body.id)
+    await BoardPage.destroy({where: {id: req.body.id}}).then(res.send({code: 200}))
+        .catch((err) => console.log(err));
 }
 
 module.exports = {
     getBoards,
     getBoard,
+    addBoard,
     updateBoard,
     boardDelete
 }
