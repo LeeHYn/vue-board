@@ -1,9 +1,10 @@
-const randToken = require('rand-token');
 const jwt = require('jsonwebtoken');
 const secretKey = require('../config/secretKey').secretKey;
 const options = require('../config/secretKey').options;
 const TOKEN_EXPIRED = -3;
 const TOKEN_INVALID = -2;
+const randToken = require('rand-token');
+
 
 module.exports = {
     sign: async (user) => {

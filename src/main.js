@@ -4,7 +4,10 @@ import router from './router'
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
+import store from "@/store/store";
+createApp(App)
+    .use(store)
+    .mount("#app");
 
 
 const app = createApp(App)

@@ -2,6 +2,7 @@
 import axios from "axios";
 import {reactive} from "vue";
 import router from "@/router";
+import store from "@/store/store";
 let body = reactive({});
 const LogInEvent = async ()=>{
     body = {
@@ -14,13 +15,13 @@ const LogInEvent = async ()=>{
             if (!code) {
                 alert("에러입니다.")
             } else if (code === 200) {
-                // eslint-disable-next-line no-restricted-globals
                 alert("로그인에 성공하셧습니다.")
                 console.log(res.data.token)
+                const token = res.data.token;
+                store.dispatch('setToken', token)
                 router.push(
                     { name: 'home'}
                 );
-
             }
         }
     )
