@@ -3,24 +3,26 @@ import axios from "axios";
 import {reactive} from "vue";
 import router from "@/router";
 import store from "@/store/store";
+
 let body = reactive({});
-const LogInEvent = async ()=>{
+const LogInEvent = async () => {
     body = {
         userId: body.userId,
         password: body.password
     }
-    await axios.post("http://localhost:8081/api/user/SignInUser",body).then(
-        (res)=>{
+    await axios.post("http://localhost:8081/api/user/SignInUser", body).then(
+        (res) => {
             const code = res.data.code;
+            const token = res.data.token;
+            console.log("SignInView token : " + res.data.token)
+            store.commit('setToken', token);
             if (!code) {
                 alert("에러입니다.")
             } else if (code === 200) {
                 alert("로그인에 성공하셧습니다.")
-                console.log(res.data.token)
-                const token = res.data.token;
-                store.dispatch('setToken', token)
+
                 router.push(
-                    { name: 'home'}
+                    {name: 'home'}
                 );
             }
         }
@@ -28,6 +30,11 @@ const LogInEvent = async ()=>{
 
 }
 
+const signUpPage = () => {
+    router.push({
+        name: 'SignUp'
+    });
+}
 </script>
 
 <template>
@@ -44,18 +51,23 @@ const LogInEvent = async ()=>{
                                 <p class="text-white-50 mb-5">Please enter your login and password!</p>
 
                                 <div class="form-outline form-white mb-4">
-                                    <input type="email" id="typeEmailX" class="form-control form-control-lg"  v-model="body.userId"/>
+                                    <input type="email" id="typeEmailX" class="form-control form-control-lg"
+                                           v-model="body.userId"/>
                                     <label class="form-label" for="typeEmailX">Email</label>
                                 </div>
 
                                 <div class="form-outline form-white mb-4">
-                                    <input type="password" id="typePasswordX" class="form-control form-control-lg"  v-model="body.password" />
+                                    <input type="password" id="typePasswordX" class="form-control form-control-lg"
+                                           v-model="body.password"/>
                                     <label class="form-label" for="typePasswordX">Password</label>
                                 </div>
 
-                                <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p>
+                                <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a>
+                                </p>
 
-                                <button type="submit" class="btn btn-outline-light btn-lg px-5" @click="LogInEvent">Login</button>
+                                <button type="submit" class="btn btn-outline-light btn-lg px-5" @click="LogInEvent">
+                                    Login
+                                </button>
 
                                 <div class="d-flex justify-content-center text-center mt-4 pt-1">
                                     <a href="#!" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
@@ -65,7 +77,8 @@ const LogInEvent = async ()=>{
                             </div>
 
                             <div>
-                                <p class="mb-0">Don't have an account? <a href="#!" class="text-white-50 fw-bold">Sign Up</a>
+                                <p class="mb-0">Don't have an account? <a @click="signUpPage"
+                                                                          class="text-white-50 fw-bold">Sign Up</a>
                                 </p>
                             </div>
 
@@ -76,7 +89,6 @@ const LogInEvent = async ()=>{
         </div>
     </section>
 </template>
-
 
 
 <style lang="scss" scoped>

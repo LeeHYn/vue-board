@@ -33,6 +33,8 @@ module.exports = {
                     "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
                 ),
             }
+        },{
+            isNewRecord:true,
         });
     },
     async down(queryInterface, Sequelize) {

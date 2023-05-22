@@ -15,7 +15,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   Board.init({
     boardTitle: DataTypes.STRING,
-    boardContent: DataTypes.STRING
+    boardContent: DataTypes.STRING,
+    filepath:DataTypes.STRING,
+    originalName:DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Board',

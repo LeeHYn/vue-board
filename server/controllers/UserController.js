@@ -1,28 +1,24 @@
 const db = require("../models");
-const { Op } = require("sequelize");
+const {Op} = require("sequelize");
 const User = db.users;
-const jwt = require("../models/jwt")
-
-
-
-
-
+const jwt = require("jsonwebtoken")
+const authUtil = require('../middlewares/auth.js')
 //nameCheck
-const checkId = async (req,res) =>{
-    try{
+const checkId = async (req, res) => {
+    try {
         let userId = req.body.id;
         const user = await User.findOne({
             where: {
-                [Op.or]: [{ userId: userId }],
+                [Op.or]: [{userId: userId}],
             },
         });
         console.log(res.json)
         if (user === null) {
-            return  res.send({code:200})
+            return res.send({code: 200})
         } else {
-            return res.send({code:404});
+            return res.send({code: 404});
         }
-    }catch (err){
+    } catch (err) {
         console.log(err)
     }
 
@@ -32,34 +28,76 @@ const checkId = async (req,res) =>{
 const addUser = async (req, res) => {
     let info = {
         name: req.body.name,
-        userId:req.body.id,
+        userId: req.body.id,
         password: req.body.password,
     };
-    const user = await User.create(info).then(res.send({code: 200})).catch((err) => {
+   await User.create(info).then(res.send({code: 200})).catch((err) => {
         res.send({code: 401})
         console.log(err)
     });
 };
 
-const oneUser = async (req, res ) => {
+//LogIn
+const oneUser = async (req, res) => {
     let userId = req.body.userId;
     let password = req.body.password;
-
-    // eslint-disable-next-line no-useless-catch
     try {
-       const user = await User.findOne({where: {userId: userId, password: password}})
-        const jwtToken = await jwt.sign(user);
-        return res.send({
-            /* 생성된 Token을 클라이언트에게 Response */
-            code:200,
-            token: jwtToken.token
+        const user = await User.findOne({where: {userId: userId, password: password}})
+        const accessToken = jwt.sign(
+            {
+                userId: User.userId,
+            },              // 유저 정보
+            "${process.env.JWT_KEY}",  // 일종의 salt
+            {expiresIn: 60 * 60 * 1000}      // 옵션 중에서 만료기간
+        )
+        const refreshToken = jwt.sign(
+            {
+                userId: User.userId,
+            },
+            "${process.env.JWT_KEY}",
+            {expiresIn: '1d'}
+        )
+
+        if (user) {
+            user.refresh = refreshToken
+            await user.save();
+
+        } else {
+            console.log("User not found");
+        }
+        return res.cookie('user', accessToken).send({
+            code: 200,
+            token: accessToken,
         })
-    }catch (err){
-        throw err
+
+
+    } catch (e) {
+        return console.log(e)
     }
 
 
 };
+//LogOut
+const logOut = async (req, res) => {
+    const secretKey = "${process.env.JWT_KEY}"
+    req.decoded = jwt.verify(req.cookies, secretKey);
+    console.log(req.decoded)
+    const userId = await req.decoded
+    const user = await User.findOne({where: {userId: userId}})
+    if (user) {
+        user.refersh = null;
+        await user.save();
+    } else {
+        console.log("User not found");
+    }
+    return res.send({
+        code: 200,
+    }).cookie.clear('user')
+};
+
+const token = (req, res) => {
+    res.json(req.cookies);
+}
 //update
 
 const updateUser = async (req, res) => {
@@ -84,4 +122,6 @@ module.exports = {
     oneUser,
     updateUser,
     deleteUser,
+    logOut,
+    token,
 };

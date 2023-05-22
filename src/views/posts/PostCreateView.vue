@@ -42,6 +42,10 @@ const createdBoard = async ()=>{
                 <label for="content" class="form-label">내용</label>
                 <textarea class="form-control" id="content" rows="3" v-model="body.content"></textarea>
             </div>
+            <div class="mb-3">
+                <input id="input" type="file" accept="text/*" />
+            </div>
+
             <div class="pt-4">
                 <button type="button" class="btn btn-outline-dark me-2" @click="goListPage">목록</button>
                 <button type="submit" class="btn btn-primary" @click="createdBoard">저장</button>

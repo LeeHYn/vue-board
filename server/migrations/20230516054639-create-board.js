@@ -15,6 +15,12 @@ module.exports = {
       boardContent: {
         type: Sequelize.STRING
       },
+      filepath:{
+        type: Sequelize.STRING
+      },
+      originalName:{
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

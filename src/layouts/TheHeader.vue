@@ -27,8 +27,7 @@
                         </li>
                     </ul>
                     <div class="d-flex">
-                        <button v-if="isStatusOn" class="btn btn-outline-light" type="button" @click="goPage" >로그인</button>
-                        <button v-if="isStatusOff" class="btn btn-outline-light" type="button" @click="goPage" >로그아웃</button>
+                        <button class="btn btn-outline-light" type="button" @click="store.getters.isLogin ? goPage() : goAboutPage()" >{{store.getters.isLogin ? "로그인" : "로그아웃"}}</button>
                     </div>
                 </div>
             </div>
@@ -38,8 +37,8 @@
 
 <script setup>
 import {useRouter} from 'vue-router';
-const isStatusOn = true;
-const isStatusOff = false;
+import store from "@/store/store";
+
 
 const router = useRouter();
 
@@ -49,6 +48,14 @@ const goPage = () => {
     });
 };
 
+const pagerend =()=>{
+    store.commit("loginCheck")
+    console.log(store.state.token)
+}
+pagerend();
+const goAboutPage = () => {
+    store.commit('logout');
+};
 
 </script>
 

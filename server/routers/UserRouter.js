@@ -1,17 +1,23 @@
 const userController = require("../controllers/UserController.js");
 
-const router = require("express").Router();
-//const authUtil = require('../middlewares/auth').checkToken()
+const userRouter = require("express").Router();
+
+const {auth} = require("../middlewares/auth")
 
 
-router.post("/user/addUser", userController.addUser);
 
-router.post("/user/SignInUser",userController.oneUser);
+userRouter.get('/tokenCheck', auth,userController.token)
 
-router.post("/user/checkId", userController.checkId);
+userRouter.get('/user/logout', userController.logOut);
 
-router.put("/user/updateUser", userController.updateUser);
+userRouter.post("/user/addUser", userController.addUser);
 
-router.delete("/user/deleteUser", userController.deleteUser);
+userRouter.post("/user/SignInUser",userController.oneUser);
 
-module.exports = router;
+userRouter.post("/user/checkId", userController.checkId);
+
+userRouter.put("/user/updateUser", userController.updateUser);
+
+userRouter.delete("/user/deleteUser", userController.deleteUser);
+
+module.exports = userRouter;
