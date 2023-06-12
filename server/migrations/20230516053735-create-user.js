@@ -11,13 +11,20 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             userId: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: false,
             },
             password: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: false,
             },
             name: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
+            refresh:{
+                type: Sequelize.STRING,
+                allowNull:true
             },
             createdAt: {
                 allowNull: false,

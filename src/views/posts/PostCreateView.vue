@@ -3,11 +3,11 @@ import { useRouter } from 'vue-router';
 import axios from "axios";
 import {reactive} from "vue";
 const router = useRouter();
-const goListPage = () => {
-    router.push({ name: 'PostList' });
-};
-
 let body = reactive({});
+
+function goListPage() {
+    router.push({ name: 'PostList' });
+}
 const createdBoard = async ()=>{
     body = {
         boardTitle:body.title,
@@ -16,6 +16,8 @@ const createdBoard = async ()=>{
     console.log(body)
     await axios.post("http://localhost:8081/api/board/addBoard", body)
         .then(res => {
+            console.log('SUCCESS!!');
+            console.log(res.data)
             const code = res.data.code;
             if (!code) {
                 alert("에러입니다.")
@@ -24,8 +26,11 @@ const createdBoard = async ()=>{
                 alert("게시물 등록에 성공하셧습니다.")
                 router.push({ name: 'PostList' });
             }
-        })
+        }).catch(function () {
+            console.log('FAILURE!!');
+        });
 }
+
 
 </script>
 
@@ -42,14 +47,13 @@ const createdBoard = async ()=>{
                 <label for="content" class="form-label">내용</label>
                 <textarea class="form-control" id="content" rows="3" v-model="body.content"></textarea>
             </div>
-            <div class="mb-3">
-                <input id="input" type="file" accept="text/*" />
-            </div>
+            <br>
 
             <div class="pt-4">
                 <button type="button" class="btn btn-outline-dark me-2" @click="goListPage">목록</button>
                 <button type="submit" class="btn btn-primary" @click="createdBoard">저장</button>
             </div>
+            <br>
         </form>
     </div>
 </template>

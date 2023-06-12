@@ -8,7 +8,9 @@ exports.auth = (req, res, next) => {
         // 요청 헤더에 저장된 토큰(req.headers.authorization)과 비밀키를 사용하여 토큰을 req.decoded에 반환
         // req.decoded = jwt.verify(req.headers.authorization, JWT_KEY);
         // 쿠키에 user 이름으로 JWT 저장
-        req.locals.decoded = jwt.verify(req.cookies,secretKey);
+        console.log(req.body.state.token)
+        console.log(req.body.state)
+        req.locals.decoded = jwt.verify(req.body.state,secretKey);
         console.log(req.decoded)
         return next();
     } catch (error) {

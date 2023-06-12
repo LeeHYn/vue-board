@@ -7,6 +7,7 @@ import PostEditView from '@/views/posts/PostEditView.vue';
 import PostListView from '@/views/posts/PostListView.vue';
 import SignInView from "@/views/sign/SignInView.vue";
 import SignUpView from "@/views/sign/SignUpView.vue";
+import FilePostCreateView from "@/views/posts/FilePostCreateView.vue";
 
 const routes = [
     {
@@ -46,7 +47,12 @@ const routes = [
         path: '/login/signup',
         name: 'SignUp',
         component: SignUpView
+    },{
+        path: '/File/FileCreate',
+        name: 'FileCreate',
+        component: FilePostCreateView
     }
+
 ]
 
 const router = createRouter({

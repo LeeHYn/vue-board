@@ -26,6 +26,10 @@
                             <RouterLink class="nav-link" active-class="active" to="/posts">게시글</RouterLink>
                         </li>
                     </ul>
+                    <div>
+                        <v-icon icon="fas fa-bell"/>
+                    </div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
                     <div class="d-flex">
                         <button class="btn btn-outline-light" type="button" @click="store.getters.isLogin ? goPage() : goAboutPage()" >{{store.getters.isLogin ? "로그인" : "로그아웃"}}</button>
                     </div>

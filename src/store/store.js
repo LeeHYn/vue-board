@@ -1,58 +1,63 @@
-
-import { createStore } from "vuex";
+import {createStore} from "vuex";
 import axios from "axios";
 import router from "@/router";
-
-
+import VueCookies from "vue-cookies";
 
 export default createStore({
     state: {
         token: '',
+        userId: ''
     },
     getters: {
-        isLogin(state){
-            return state.token == '' ? true : false ;
+        isLogin(state) {
+            return state.token == '' ? true : false;
         }
     },
     mutations: {  // commit 으로 부를 수 있다.
-        setToken(state, _token){
-            state.token = _token;
-            axios.defaults.headers.common['Authorization'] = `Bearer ${state.token}`
+        setLogIn(state, userInfo) {
+            state.token = userInfo.accessToken;
+            state.userId = userInfo.userId;
         },
         logout: function (state) {
-            state.token = '';
-            alert("로그아웃 되셧습니다")
-            axios.get("http://localhost:8081/api/user/logout")
-            axios.defaults.headers.common['Authorization'] = null;
-            router.push({
-                name : "home"
-            })
+            if (state.token) {
+                state.token = '';
+                state.userId = '';
+                alert("로그아웃 되셧습니다")
+                //axios.get("http://localhost:8081/api/user/logout")
+                axios.defaults.headers.common['Authorization'] = null;
+                router.push({
+                    name: "home"
+                })
+            }
         },
-        loginCheck: async function (state){
-           await axios.get(`http://localhost:8081/api/tokenCheck`,{headers:{Authenticate:'user'}}).then(
+        loginCheck: async function (state) {
+            console.log(VueCookies.get('accessToken'))
+            await axios.get(`http://localhost:8081/api/tokenCheck`, {headers: {"accessToken": VueCookies.get('accessToken')}}).then(
                 res => {
-                    const code = res.data.code;
+                    const code = res.status;
                     console.log(code)
-                    if(code === 419 ){
-                        return alert(res.data.msg)
-                    }else if(code === 401){
-                        return alert(res.data.msg)
-                    }else {
+                    if (code === 400) {
+                        return alert(res.data.msg), router.push({name: 'SignIn'})
+
+                    } else if (code === 200) {
+                        console.log(res.data.msg)
+                        state.token = res.data.token
                         return state.token
                     }
-                }).catch(e=>{
-                    router.push(
-                        {
-                            name : 'SignIn'
-                        }
-                        )
-                    console.log(e,"로그인에 실패하셧습니다");
+                }).catch(e => {
+                console.log(e);
+                router.push(
+                    {
+                        name: 'SignIn'
+                    }
+                )
+
             })
         }
     },
     actions: { // dispatch 로 부를 수 있다.
-        setToken:({commit} , _token) => {
-            commit('setToken' , _token);
+        setToken: ({commit}, _token) => {
+            commit('setToken', _token);
         }
     }
 })

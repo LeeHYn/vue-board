@@ -1,18 +1,22 @@
-'use strict';
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Boards', {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('Files', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      boardTitle: {
+      fileName: {
         type: Sequelize.STRING
       },
-      boardContent: {
+      fileType: {
+        type: Sequelize.STRING
+      },
+      fileSize: {
+        type: Sequelize.INTEGER
+      },
+      filePath: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -25,7 +29,7 @@ module.exports = {
       }
     });
   },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Boards');
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('Files');
   }
 };

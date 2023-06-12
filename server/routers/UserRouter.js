@@ -2,11 +2,10 @@ const userController = require("../controllers/UserController.js");
 
 const userRouter = require("express").Router();
 
-const {auth} = require("../middlewares/auth")
 
 
 
-userRouter.get('/tokenCheck', auth,userController.token)
+userRouter.get('/tokenCheck', userController.check)
 
 userRouter.get('/user/logout', userController.logOut);
 

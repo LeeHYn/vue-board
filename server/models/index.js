@@ -12,8 +12,9 @@ const sequelize = new Sequelize(
   config
 );
 
-db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+
 
 sequelize
   .sync({ force: false })
@@ -24,6 +25,21 @@ sequelize
     console.error(err);
   });
 
-db.users = require("./User.js")(sequelize, DataTypes);
-db.boards = require("./Board.js")(sequelize, DataTypes);
+const User = require("./User.js")(sequelize, DataTypes);
+const Board = require("./Board.js")(sequelize, DataTypes);
+const Comment = require("./Comment.js")(sequelize, DataTypes);
+const Comment_relations = require("./Comment_relations.js")(sequelize, DataTypes);
+const File = require("./File.js") (sequelize, DataTypes);
+
+db.users = User;
+db.boards = Board;
+db.comments = Comment;
+db.comment_relations = Comment_relations;
+db.files = File
+
+User.associate(db)
+Board.associate(db)
+Comment.associate(db)
+Comment_relations.associate(db)
+File.associate(db)
 module.exports = db;

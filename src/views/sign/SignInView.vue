@@ -3,6 +3,7 @@ import axios from "axios";
 import {reactive} from "vue";
 import router from "@/router";
 import store from "@/store/store";
+import VueCookies from "vue-cookies";
 
 let body = reactive({});
 const LogInEvent = async () => {
@@ -13,14 +14,24 @@ const LogInEvent = async () => {
     await axios.post("http://localhost:8081/api/user/SignInUser", body).then(
         (res) => {
             const code = res.data.code;
-            const token = res.data.token;
-            console.log("SignInView token : " + res.data.token)
-            store.commit('setToken', token);
+            const accessToken = res.data.accessToken;
+            const userId = res.data.userId
+
+            const userInfo = {accessToken,userId}
+            VueCookies.set('accessToken', accessToken, '60 * 60 * 1000');
+            VueCookies.set('refresh_token', res.data.refresh_token, '1d');
+
+            console.log(VueCookies.get('accessToken'))
+            axios.defaults.headers['accessToken'] = VueCookies.get('accessToken');
+            console.log(userId)
+            console.log(store.state)
+
+            store.commit('setLogIn', userInfo);
+            console.log(store.state)
             if (!code) {
                 alert("에러입니다.")
             } else if (code === 200) {
                 alert("로그인에 성공하셧습니다.")
-
                 router.push(
                     {name: 'home'}
                 );

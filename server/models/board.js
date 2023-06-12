@@ -9,15 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate(db) {
       // define association here
+      db.boards.hasMany(db.comments,{foreignKey : 'board_commenter' , sourceKey : 'id'})
+      db.boards.hasMany(db.comment_relations,{foreignKey : 'board_comment' , sourceKey : 'id'})
     }
   }
   Board.init({
     boardTitle: DataTypes.STRING,
     boardContent: DataTypes.STRING,
-    filepath:DataTypes.STRING,
-    originalName:DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Board',

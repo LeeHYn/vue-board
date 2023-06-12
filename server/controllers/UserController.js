@@ -2,7 +2,7 @@ const db = require("../models");
 const {Op} = require("sequelize");
 const User = db.users;
 const jwt = require("jsonwebtoken")
-const authUtil = require('../middlewares/auth.js')
+
 //nameCheck
 const checkId = async (req, res) => {
     try {
@@ -61,14 +61,15 @@ const oneUser = async (req, res) => {
         if (user) {
             user.refresh = refreshToken
             await user.save();
-
+            return res.send({
+                code: 200,
+                accessToken: accessToken,
+                refresh_token:refreshToken,
+                userId:req.body.userId
+            })
         } else {
             console.log("User not found");
         }
-        return res.cookie('user', accessToken).send({
-            code: 200,
-            token: accessToken,
-        })
 
 
     } catch (e) {
@@ -94,10 +95,40 @@ const logOut = async (req, res) => {
         code: 200,
     }).cookie.clear('user')
 };
+//tokencheck
+const check = (req, res) => {
+    // 인증 확인
+    const token = req.header('accessToken')
+    console.log("token : " + req.header('accessToken'))
+    let jwt_secret = "${process.env.JWT_KEY}";
 
-const token = (req, res) => {
-    res.json(req.cookies);
-}
+    if (!token) {
+        return res.status(400).json({
+            'status': 400,
+            'msg': 'Token 없음'
+        });
+    }
+    const checkToken = new Promise((resolve, reject) => {
+        jwt.verify(token, jwt_secret, function (err, decoded) {
+            if (err) reject(err);
+            resolve(decoded);
+        });
+    });
+
+    checkToken.then(
+        token => {
+            console.log(token);
+            return res.status(200).json({
+                'status': 200,
+                'msg': 'success',
+                token
+            });
+        }
+    )
+};
+
+
+
 //update
 
 const updateUser = async (req, res) => {
@@ -123,5 +154,5 @@ module.exports = {
     updateUser,
     deleteUser,
     logOut,
-    token,
+    check
 };

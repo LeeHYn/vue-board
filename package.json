@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@mdi/font": "5.9.55",
     "@popperjs/core": "^2.11.7",
     "@types/cookie-parser": "^1.4.3",
     "axios": "^1.4.0",
@@ -23,21 +24,32 @@
     "dotenv": "^16.0.3",
     "env": "^0.0.2",
     "express": "^4.18.2",
+    "express-error-handler": "^1.1.0",
+    "fontawesome": "^5.6.3",
+    "handy-uploader": "^1.1.8",
+    "http": "^0.0.1-security",
     "jsonwebtoken": "^9.0.0",
     "local-storage": "^2.0.0",
+    "multer": "^1.4.5-lts.1",
     "mysql2": "^3.3.0",
     "nodemon": "^2.0.22",
     "path": "^0.12.7",
     "rand-token": "^1.0.1",
+    "roboto-fontface": "*",
     "sequelize": "^6.31.1",
     "sequelize-cli": "^6.6.0",
+    "serve-static": "^1.15.0",
     "vue": "^3.2.13",
+    "vue-cookies": "^1.8.3",
     "vue-router": "^4.1.6",
-    "vuex": "^4.1.0"
+    "vuetify": "^3.0.0-beta.0",
+    "vuex": "^4.1.0",
+    "webfontloader": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@fortawesome/fontawesome-free": "^6.4.0",
     "@mdi/font": "^7.2.96",
     "@mdi/js": "^7.2.96",
     "@vue/cli-plugin-babel": "~5.0.0",
@@ -45,7 +57,9 @@
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3"
+    "eslint-plugin-vue": "^8.0.3",
+    "vue-cli-plugin-vuetify": "~2.5.8",
+    "webpack-plugin-vuetify": "^2.0.0-alpha.0"
   },
   "eslintConfig": {
     "root": true,
@@ -67,6 +81,10 @@
     "not dead",
     "not ie 11"
   ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "editor.tabSize": 4,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -74,9 +92,5 @@
     "typescriptreact",
     "vue",
     "markdown"
-  ],
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
-  },
-  "editor.tabSize": 4
+  ]
 }
