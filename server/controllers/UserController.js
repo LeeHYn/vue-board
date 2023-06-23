@@ -2,7 +2,6 @@ const db = require("../models");
 const {Op} = require("sequelize");
 const User = db.users;
 const jwt = require("jsonwebtoken")
-
 //nameCheck
 const checkId = async (req, res) => {
     try {
@@ -80,52 +79,101 @@ const oneUser = async (req, res) => {
 };
 //LogOut
 const logOut = async (req, res) => {
-    const secretKey = "${process.env.JWT_KEY}"
+    const secretKey = "${process.env.JWT_KEY}";
     req.decoded = jwt.verify(req.cookies, secretKey);
-    console.log(req.decoded)
-    const userId = await req.decoded
-    const user = await User.findOne({where: {userId: userId}})
+    console.log(req.decoded);
+    const userId = await req.decoded;
+    const user = await User.findOne({ where: { userId: userId } });
     if (user) {
         user.refersh = null;
         await user.save();
     } else {
         console.log("User not found");
     }
-    return res.send({
-        code: 200,
-    }).cookie.clear('user')
-};
-//tokencheck
-const check = (req, res) => {
-    // 인증 확인
-    const token = req.header('accessToken')
-    console.log("token : " + req.header('accessToken'))
-    let jwt_secret = "${process.env.JWT_KEY}";
 
-    if (!token) {
+    // 쿠키 삭제
+    res.clearCookie('accessToken');
+    res.clearCookie('refresh_token');
+    return res.status(200).send({
+        code: 200,
+    });
+}
+//tokencheck
+const check = async (req, res) => {
+    // 토큰 확인
+    const accessToken = req.header('accessToken');
+    const refreshToken = req.header('refresh_token');
+    const jwt_secret = "${process.env.JWT_KEY}";
+
+    if (!accessToken) {
         return res.status(400).json({
             'status': 400,
-            'msg': 'Token 없음'
+            'msg': 'Access Token이 없습니다.'
         });
     }
-    const checkToken = new Promise((resolve, reject) => {
-        jwt.verify(token, jwt_secret, function (err, decoded) {
-            if (err) reject(err);
-            resolve(decoded);
-        });
-    });
 
-    checkToken.then(
-        token => {
-            console.log(token);
-            return res.status(200).json({
-                'status': 200,
-                'msg': 'success',
-                token
-            });
-        }
-    )
+    try {
+        // Access Token 검증
+        jwt.verify(accessToken, jwt_secret, (err, decoded) => {
+            if (err) {
+                // Access Token이 만료되었을 경우 Refresh Token으로 갱신 시도
+                if (err.name === 'TokenExpiredError' && refreshToken) {
+                    jwt.verify(refreshToken, jwt_secret, async (err, decoded) => {
+                        if (err) {
+                            return res.status(401).json({
+                                'status': 401,
+                                'msg': 'Refresh Token이 유효하지 않습니다.'
+                            });
+                        }
+
+                        // DB에서 해당 유저의 Refresh Token 확인
+                        const user = await User.findOne({ where: { refresh: refreshToken } });
+                        if (!user) {
+                            return res.status(401).json({
+                                'status': 401,
+                                'msg': 'Refresh Token이 유효하지 않습니다.'
+                            });
+                        }
+
+                        // Access Token 재발급
+                        const newAccessToken = jwt.sign(
+                            {
+                                userId: user.userId
+                            },
+                            jwt_secret,
+                            { expiresIn: 60 * 60 * 1000 }
+                        );
+
+                        return res.status(200).json({
+                            'status': 200,
+                            'msg': 'Access Token이 갱신되었습니다.',
+                            'accessToken': newAccessToken
+                        });
+                    });
+                } else {
+                    return res.status(401).json({
+                        'status': 401,
+                        'msg': 'Access Token이 유효하지 않습니다.'
+                    });
+                }
+            } else {
+                // Access Token이 유효한 경우
+                return res.status(200).json({
+                    'status': 200,
+                    'msg': 'Access Token이 유효합니다.',
+                    'decoded': decoded
+                });
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            'status': 500,
+            'msg': '서버 오류'
+        });
+    }
 };
+
 
 
 

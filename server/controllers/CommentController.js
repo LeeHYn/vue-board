@@ -8,13 +8,15 @@ const Comment_relations = db.comment_relations;
 const commentCreate = async (req, res) => {
     try {
         console.log(req.body);
-
+        console.log("여기까지 통과")
         if (req.body.parents_comment === 0) {
+            console.log("여기까지 통과")
             const comment = await Comments.create({
                 name: req.body.userId,
                 board_commenter: req.body.id,
                 content: req.body.content,
             });
+            console.log("여기까지 통과")
             await Comment_relations.create({
                 board_comment: req.body.id,
                 myNum: comment.id,

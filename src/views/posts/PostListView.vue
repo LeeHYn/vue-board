@@ -58,6 +58,8 @@ const nextPage = () => {
 const prevPage = () => {
     if(currentPage.value > 1) currentPage.value--;
 };
+
+
 </script>
 
 <template>

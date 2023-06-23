@@ -1,66 +1,76 @@
 <template>
-    <header>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary navbar-dark bg-primary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Vue3 Coding</a>
-                <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                >
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <RouterLink class="nav-link" active-class="active" to="/">Home</RouterLink>
-                        </li>
-                        <li class="nav-item">
-                            <RouterLink class="nav-link" active-class="active" to="/about">About</RouterLink>
-                        </li>
-                        <li class="nav-item">
-                            <RouterLink class="nav-link" active-class="active" to="/posts">게시글</RouterLink>
-                        </li>
-                    </ul>
-                    <div>
-                        <v-icon icon="fas fa-bell"/>
-                    </div>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <div class="d-flex">
-                        <button class="btn btn-outline-light" type="button" @click="store.getters.isLogin ? goPage() : goAboutPage()" >{{store.getters.isLogin ? "로그인" : "로그아웃"}}</button>
+    <div>
+        <div class="nav-wrapper">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                            <div class="container-fluid">
+                                <a class="navbar-brand" href="#"><i class="dummy_icons"></i> Navbar</a>
+                                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
+                                    <span class="navbar-toggler-icon"></span>
+                                </button>
+                                <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent1">
+                                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#"><i class="dummy_icons"></i> 마이페이지</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="#"><i class="dummy_icons"></i> 로그인</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
                     </div>
                 </div>
             </div>
-        </nav>
-    </header>
+        </div>
+        <div class="nav-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent2">
+                        <ul class="navbar-nav mb-2 mb-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">영화</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">예매</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#">이벤트</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
 </template>
 
-<script setup>
-import {useRouter} from 'vue-router';
-import store from "@/store/store";
+<script setup></script>
 
-
-const router = useRouter();
-
-const goPage = () => {
-    router.push({
-        name: 'SignIn'
-    });
-};
-
-const pagerend =()=>{
-    store.commit("loginCheck")
-    console.log(store.state.token)
+<style scoped>
+.nav-wrapper {
+    margin-left: 5%;
+    margin-right: 5%;
 }
-pagerend();
-const goAboutPage = () => {
-    store.commit('logout');
-};
 
-</script>
+.navbar {
+    width: 100%;
+}
 
-<style scoped></style>
+.navbar-nav {
+    width: 100%;
+    justify-content: center;
+}
+
+.dummy_icons {
+    /* Add your icon styling here */
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+}
+</style>

@@ -1,63 +1,57 @@
-import {createStore} from "vuex";
+import { createStore } from "vuex";
 import axios from "axios";
 import router from "@/router";
 import VueCookies from "vue-cookies";
 
 export default createStore({
     state: {
-        token: '',
-        userId: ''
+        token: "",
+        userId: ""
     },
     getters: {
         isLogin(state) {
-            return state.token == '' ? true : false;
+            return state.token !== "";
         }
     },
-    mutations: {  // commit 으로 부를 수 있다.
+    mutations: {
         setLogIn(state, userInfo) {
             state.token = userInfo.accessToken;
             state.userId = userInfo.userId;
         },
-        logout: function (state) {
+        logout(state) {
             if (state.token) {
-                state.token = '';
-                state.userId = '';
-                alert("로그아웃 되셧습니다")
-                //axios.get("http://localhost:8081/api/user/logout")
-                axios.defaults.headers.common['Authorization'] = null;
-                router.push({
-                    name: "home"
-                })
+                state.token = "";
+                state.userId = "";
+                VueCookies.remove("accessToken");
+                VueCookies.remove("refresh_token");
+                alert("로그아웃 되셨습니다.");
+                router.push({ name: "home" });
             }
         },
-        loginCheck: async function (state) {
-            console.log(VueCookies.get('accessToken'))
-            await axios.get(`http://localhost:8081/api/tokenCheck`, {headers: {"accessToken": VueCookies.get('accessToken')}}).then(
-                res => {
-                    const code = res.status;
-                    console.log(code)
-                    if (code === 400) {
-                        return alert(res.data.msg), router.push({name: 'SignIn'})
-
-                    } else if (code === 200) {
-                        console.log(res.data.msg)
-                        state.token = res.data.token
-                        return state.token
-                    }
-                }).catch(e => {
-                console.log(e);
-                router.push(
-                    {
-                        name: 'SignIn'
-                    }
-                )
-
-            })
+        updateToken(state, newToken) {
+            state.token = newToken;
+            VueCookies.set("accessToken", newToken, "1h");
         }
     },
-    actions: { // dispatch 로 부를 수 있다.
-        setToken: ({commit}, _token) => {
-            commit('setToken', _token);
+    actions: {
+        async refreshToken({ commit }) {
+            const refreshToken = VueCookies.get("refresh_token");
+            if (!refreshToken) {
+                return; // 리프레시 토큰이 없으면 종료
+            }
+
+            try {
+                const response = await axios.post(
+                    "http://localhost:8081/api/token/refresh",
+                    { refresh_token: refreshToken }
+                );
+                const newAccessToken = response.data.access_token;
+
+                // 토큰 정보 업데이트
+                commit("updateToken", newAccessToken);
+            } catch (error) {
+                console.error(error);
+            }
         }
     }
-})
+});
